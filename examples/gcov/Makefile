@@ -45,6 +45,7 @@ test: $(PROG) $(COV_DIR)
 	# generate html
 	genhtml --legend --title "Testing lcov" \
 		--output-directory=$(COV_DIR) $(COV_DIR)/lcov.final
+	@echo -e "\n\e[1;92m-- OK --\e[0;39m"
 
 .PHONY: open_cov
 open_cov: $(COV_DIR)/index.html

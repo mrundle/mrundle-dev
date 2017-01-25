@@ -1,20 +1,74 @@
-// TODO use mrlibc
-
+#include <errno.h>
+#include <stdbool.h>
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
+#include <sys/wait.h>
 #include <unistd.h>
 
 #define PROMPT_CHAR "~"
 #define MRSH_RL_BUFSZ 1024
 #define MRSH_TOK_BUFSZ 2
 
-#define fatal(args...) do { \
+// TODO use mrlibc
+
+#define elementsof(arr) (sizeof(arr) / sizeof(arr[0]))
+
+#define error(args...) do { \
     fprintf(stderr, "mrsh: ");  \
     fprintf(stderr, args);  \
     fprintf(stderr, "\n");  \
     exit(EXIT_FAILURE);     \
 } while (0)
+
+#define fatal(args...) do { \
+    error(args);            \
+    exit(EXIT_FAILURE);     \
+} while (0)
+
+struct _builtin {
+    void (*function)(char **args);
+    const char *const name;
+    const char *const description;
+};
+
+#define DECLARE_BUILTIN(name) static void name(char **args);
+DECLARE_BUILTIN(mrsh_help);
+DECLARE_BUILTIN(mrsh_exit);
+DECLARE_BUILTIN(mrsh_cd);
+
+struct _builtin _builtins[] = {
+    { mrsh_help, "help", "Display this message" },
+    { mrsh_exit, "exit", "Exit the shell" },
+    { mrsh_cd,   "cd"  , "Change your working directory, e.g. `cd /tmp`"},
+};
+
+static void
+mrsh_help(char **args)
+{
+    printf("Matt Rundle's Shell. The following are built-ins: \n");
+    for (unsigned i = 0; i < elementsof(_builtins); i++) {
+        printf("    %s - %s\n", _builtins[i].name, _builtins[i].description);
+    }
+}
+
+static void
+mrsh_exit(char **args)
+{
+    exit(EXIT_SUCCESS);
+}
+
+static void
+mrsh_cd(char **args)
+{
+    if (args[1] == NULL) {
+        error("mrsh: expected arg to 'cd'\n");
+        return;
+    }
+    if (chdir(args[1]) != 0) {
+        error("mrsh: chdir(): %s", strerror(errno));
+    }
+}
 
 // todo implement malloc :) http://danluu.com/malloc-tutorial/
 static void *
@@ -32,8 +86,6 @@ mrsh_realloc(void *ptr, size_t size)
     if (ret == NULL) fatal("allocation error");
     return ret;
 }
-
-#include <stdbool.h>
 
 bool
 mrsh_is_ws(const char *c)
@@ -116,10 +168,36 @@ mrsh_read_line(void)
 static void
 mrsh_exec(char **args)
 {
-    while (*args != NULL) {
-        printf("arg: %s\n", *args);
-        args++;
+    pid_t pid, wpid;
+    int status;
+
+    pid = fork();
+    if (pid == 0) {
+        // child
+        if (execvp(*args, args) == -1) {
+            error("couldn't execute %s: %s",
+                  *args, strerror(errno));
+        }
+    } else if (pid > 0) {
+        int status;
+        do {
+            wpid = waitpid(pid, &status, WUNTRACED); 
+        } while (!WIFEXITED(status) && !WIFSIGNALED(status));
+    } else {
+        fatal("fork(): %s", strerror(errno));
     }
+}
+
+static bool
+mrsh_handle_special_cmd(char **args)
+{
+    for (unsigned i = 0; i < elementsof(_builtins); i++) {
+        if (strcmp(*args, _builtins[i].name) == 0) {
+            _builtins[i].function(args);
+            return true;
+        }
+    }
+    return false;
 }
 
 int
@@ -131,13 +209,9 @@ main(int argc, char **argv)
         printf(PROMPT_CHAR " ");
         char *line = mrsh_read_line();
         char **args = mrsh_tok_line(line);
-        if (strcmp(line, "exit") == 0) {
-            exit(EXIT_SUCCESS);
-        } else if (strcmp(line, "quit") == 0) {
-            exit(EXIT_SUCCESS);
+        if (!mrsh_handle_special_cmd(args)) {
+            mrsh_exec(args);
         }
-        mrsh_exec(args);
-        printf("got %s\n", line);
     }
 
     return 0;

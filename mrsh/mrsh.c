@@ -188,30 +188,20 @@ mrsh_exec(char **args)
     }
 }
 
-static bool
-mrsh_handle_special_cmd(char **args)
-{
-    for (unsigned i = 0; i < elementsof(_builtins); i++) {
-        if (strcmp(*args, _builtins[i].name) == 0) {
-            _builtins[i].function(args);
-            return true;
-        }
-    }
-    return false;
-}
-
 int
 main(int argc, char **argv)
 {
-    int status;
-
     while (1) {
         printf(PROMPT_CHAR " ");
         char *line = mrsh_read_line();
         char **args = mrsh_tok_line(line);
-        if (!mrsh_handle_special_cmd(args)) {
-            mrsh_exec(args);
+        for (unsigned i = 0; i < elementsof(_builtins); i++) {
+            if (strcmp(*args, _builtins[i].name) == 0) {
+                _builtins[i].function(args);
+                continue;
+            }
         }
+        mrsh_exec(args);
     }
 
     return 0;

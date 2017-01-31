@@ -81,16 +81,29 @@ TEST(run_test_memcpy)
     test_memcpy("la la la la");
 }
 
+TEST(run_test_malloc_and_free)
+{
+    const unsigned big = 10000000;
+    char *a = _malloc(big);
+    test_assert(a != NULL);
+    // poke all of it to ensure no segfault
+    for (unsigned i = 0; i < big; i++) {
+        a[i] = 1;
+    }
+    _free(a);
+}
+
 int
 main(int argc, char **argv)
 {
     void (*tests[])(void) = {
         run_test_strcat,
-        run_test_memcpy
+        run_test_memcpy,
+        run_test_malloc_and_free
     };
 
     for (unsigned i = 0; i < sizeof(tests) / sizeof(tests[0]); i++) {
         tests[i]();
     }
-    return 0; 
+    return 0;
 }

@@ -1,47 +1,118 @@
-#!/bin/bash -e
-# Downloads and installs openvpn-2.4.1
-# TODO: add to this (or another) script:
-#   - configure
-#   - start
-#   - generate keys (?)
+#!/bin/bash -eu
+# Very rough outline of how to set up and configure
+# a VPN setup using OpenVPN and EasyRSA. Automated
+# except for the bits 
 #
-# NOTE: developed for the following:
+# XXX goes as far as installing OpenSVN and creating
+# the different certs and keys needed for running an SVN
+# setup. Doesn't actually configure/run the server (TODO).
+#
+# Ideally this script would be completely idempotent. That
+# will probably come with a few security gotchas, but
+# we'll see.
+#
+# NOTE: developed on (and for) the following:
 #    $ uname -a | fold -sw 60
 #    Linux ip-172-31-44-204 4.4.23-31.54.amzn1.x86_64 #1 SMP Tue
 #    Oct 18 22:02:09 UTC 2016 x86_64 x86_64 x86_64 GNU/Linux
 
-exists() { type $@ > /dev/null 2>&1; }
-TARBALL=openvpn-2.4.1.tar.gz
-OPENSVN_DIR=${TARBALL%%.tar.gz}
+# You'll have to manually enter a passphrase for each of these
+# as you're generating the public certs and private keys.
+_CLIENTS=(
+    laptop1
+    laptop2
+    iphone1
+    iphone2
+    pc1
+)
 
-check_installed() {
+exists() { type $@ > /dev/null 2>&1; }
+
+check_installed()
+{
     local out
-    out=`type openvpn 2>&1` || return 1
+    out=`type $1 2>&1` || return 1
     echo "INSTALLED: `awk '{print $3}' <<< $out`"
 }
 
-# bail if already installed
-check_installed && exit 0
+# https://openvpn.net/index.php/open-source/documentation/howto.html#quick
+install_openvpn()
+{
+    check_installed openvpn && return 0
 
-# download
-wget https://swupdate.openvpn.org/community/releases/$TARBALL
+    local -r OPENVPN_TAR=openvpn-2.4.1.tar.gz
+    local -r OPENVPN_DIR=${OPENVPN_TAR%%.tar.gz}
+    local -r OPENVPN_URL=https://swupdate.openvpn.org/community
 
-# verify
-wget https://swupdate.openvpn.org/community/releases/$TARBALL.asc
-wget http://swupdate.openvpn.net/community/keys/samuli_new_public_key.asc
-gpg --import samuli_new_public_key.asc
-gpg --verify $TARBALL.asc
+    local -r WORKING_DIR=openvpn
+    mkdir -p $WORKING_DIR && cd $WORKING_DIR
 
-# prep dependencies
-for package in openssl-devel lzo-devel pam-devel; do
-    sudo yum install -y $package
-done
+    # download
+    wget $OPENVPN_URL/releases/$OPENVPN_TAR
 
-# build/install
-tar xvf $TARBALL
-cd $OPENSVN_DIR
-./configure
-make
-sudo make install
+    # verify
+    wget $OPENVPN_URL/releases/$OPENVPN_TAR.asc
+    wget $OPENVPN_URL/keys/samuli_new_public_key.asc
+    gpg --import samuli_new_public_key.asc
+    gpg --verify $OPENVPN_TAR.asc
 
-check_installed
+    # prep dependencies
+    for package in openssl-devel lzo-devel pam-devel; do
+        sudo yum install -y $package
+    done
+
+    # build/install
+    tar xvf $OPENVPN_TAR
+    cd $OPENVPN_DIR
+    ./configure
+    make
+    sudo make install
+}
+
+# https://openvpn.net/index.php/open-source/documentation/howto.html#quick
+# also: https://openvpn.net/index.php/open-source/documentation/miscellaneous/77-rsa-key-management.html
+install_easyrsa()
+{
+    local -r EASYRSA_VER=3.0.1
+    local -r EASYRSA_TAR=EasyRSA-$EASYRSA_VER.tgz
+    local -r EASYRSA_DIR=${EASYRSA_TAR%%.tgz}
+    local -r EASYRSA_GIT="https://github.com/OpenVPN/easy-rsa"
+    local -r EASYRSA_URL="$EASYRSA_GIT/releases/download/$EASYRSA_VER/$EASYRSA_TAR"
+
+    local -r WORKING_DIR=easyrsa
+    mkdir -p $WORKING_DIR && cd $WORKING_DIR
+
+    local -r EASYRSA=`realpath $EASYRSA_DIR/easyrsa`
+    if [[ -x $EASYRSA ]]; then
+        # XXX: if already installed, assume we're also configured
+        # TODO: actually figure out if tings have been configured
+        echo "INSTALLED: $EASYRSA"
+        return 0
+    fi
+
+    # download, unzip
+    wget $EASYRSA_URL
+    tar -xvf $EASYRSA_TAR
+    cd $EASYRSA_DIR
+
+    # generate the master certificate authority (ca) certificate & key
+    ./easyrsa init-pki
+    ./easyrsa build-ca
+
+    # generate cert & key for server
+    ./easyrsa build-server-full server
+
+    # generate certificates & keys for 3 clients
+    for client in ${_CLIENTS[*]}; do
+        ./easyrsa build-client-full $client
+    done
+
+    # generate diffie hellman parameters
+    # https://wiki.openssl.org/index.php/Diffie-Hellman_parameters
+    ./easyrsa gen-dh
+
+    find . | grep -e '.crt' -e '.key' -e '.pem'
+}
+
+install_openvpn
+install_easyrsa

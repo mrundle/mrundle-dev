@@ -1,2 +1,2 @@
-openvpn-*
-*.asc
+easyrsa/*
+openvpn/*

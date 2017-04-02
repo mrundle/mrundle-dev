@@ -1,0 +1,47 @@
+#!/bin/bash -e
+# Downloads and installs openvpn-2.4.1
+# TODO: add to this (or another) script:
+#   - configure
+#   - start
+#   - generate keys (?)
+#
+# NOTE: developed for the following:
+#    $ uname -a | fold -sw 60
+#    Linux ip-172-31-44-204 4.4.23-31.54.amzn1.x86_64 #1 SMP Tue
+#    Oct 18 22:02:09 UTC 2016 x86_64 x86_64 x86_64 GNU/Linux
+
+exists() { type $@ > /dev/null 2>&1; }
+TARBALL=openvpn-2.4.1.tar.gz
+OPENSVN_DIR=${TARBALL%%.tar.gz}
+
+check_installed() {
+    local out
+    out=`type openvpn 2>&1` || return 1
+    echo "INSTALLED: `awk '{print $3}' <<< $out`"
+}
+
+# bail if already installed
+check_installed && exit 0
+
+# download
+wget https://swupdate.openvpn.org/community/releases/$TARBALL
+
+# verify
+wget https://swupdate.openvpn.org/community/releases/$TARBALL.asc
+wget http://swupdate.openvpn.net/community/keys/samuli_new_public_key.asc
+gpg --import samuli_new_public_key.asc
+gpg --verify $TARBALL.asc
+
+# prep dependencies
+for package in openssl-devel lzo-devel pam-devel; do
+    sudo yum install -y $package
+done
+
+# build/install
+tar xvf $TARBALL
+cd $OPENSVN_DIR
+./configure
+make
+sudo make install
+
+check_installed

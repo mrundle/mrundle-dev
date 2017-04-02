@@ -1,5 +1,7 @@
 " .vimrc
 
+:color desert
+
 " Remap the escape key
 :imap jk <Esc>
 

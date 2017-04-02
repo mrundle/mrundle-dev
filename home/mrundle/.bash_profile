@@ -7,6 +7,11 @@ if [ -f ~/.bashrc ]; then
     . ~/.bashrc
 fi
 
+setup_git() {
+    git config --global user.email "$email_address"
+    git config --global user.name "Matt Rundle"
+}
+
 setup_ssh() {
     if [ -z "$SSH_AUTH_SOCK" ] ; then
         eval `ssh-agent -s`
@@ -94,20 +99,26 @@ setup_grep() {
     export -f rgrep
 }
 
-# todo: optionally specify separator (-s|--separator)
-mawk() {
-    if [ $# -eq 0 ]; then
-        echo "usage: ${FUNCNAME[0]} n"
-        return 1
-    fi
-    args=$(for i in `seq $#`; do printf "\$${@:$i:1},"; done)
-    args=$(echo $args | sed 's/,$//')
-    awk "{print $args}"
+setup_mawk() {
+    # todo: optionally specify separator (-s|--separator)
+    mawk() {
+        if [ $# -eq 0 ]; then
+            echo "usage: ${FUNCNAME[0]} n"
+            return 1
+        fi
+        args=$(for i in `seq $#`; do printf "\$${@:$i:1},"; done)
+        args=$(echo $args | sed 's/,$//')
+        awk "{print $args}"
+    }
+    export -f mawk
 }
-export -f mawk
 
-setup_grep
-setup_mawk
-setup_notetaker
-setup_prompt
-setup_tmux
+setup=(
+    git
+    grep
+    mawk
+    notetaker
+    prompt
+    tmux
+)
+for i in ${setup[*]}; do setup_$i; done

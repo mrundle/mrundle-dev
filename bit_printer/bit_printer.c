@@ -1,5 +1,6 @@
 // This program accepts a number as an arg and prints out
 // the binary representation of that number.
+#include <limits.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,9 +12,12 @@
 
 // cast everything directly to a size_t
 #define print_bits(x) _print_bits((size_t)x)
-static void _print_bits(size_t x) {
+
+static void
+_print_bits(size_t x)
+{
     bool zero = true;
-    for (size_t _i = sizeof(x) * 8; _i > 0; _i--) { 
+    for (size_t _i = sizeof(x) * CHAR_BIT; _i > 0; _i--) { 
         if (x & ((typeof(x))1 << (_i - 1))) {       
             printf("1");                            
             zero = false;                           

@@ -1,8 +1,12 @@
-PROG=bit_printer
+all: bit_printer test
 
-$(PROG): bit_printer.c
+bit_printer: %: %.c
 	gcc $< -o $@
+
+.PHONY: test
+test: test.sh
+	./$< bit_printer 2>/dev/null
 
 .PHONY: clean
 clean:
-	rm $(PROG)
+	rm -f bit_printer

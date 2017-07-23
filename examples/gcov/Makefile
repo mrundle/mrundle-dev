@@ -1,6 +1,6 @@
 PROG=program
 OBJS=library.o
-PREREQS=gcov lcov firefox
+PREREQS=gcov lcov konqueror
 SHELL=/bin/bash
 COV_DIR=cov
 GCOV_CFLAGS=-fprofile-arcs -ftest-coverage
@@ -50,10 +50,10 @@ test: $(PROG) $(COV_DIR)
 .PHONY: open_cov
 open_cov: $(COV_DIR)/index.html
 	@while true; do \
-		echo -en "\e[1;93m\nOpen the coverage report in Firefox?\e[0;49m " ; \
+		echo -en "\e[1;93m\nOpen the coverage report in Konqueror?\e[0;49m " ; \
 		read -p "(y/n) " yn ; \
 		case $$yn in \
-			[Yy]* ) /usr/bin/firefox $<; break;; \
+			[Yy]* ) /usr/bin/konqueror $<; break;; \
 			[Nn]* ) exit 0;; \
 			* ) echo "Please anser yes or no.";; \
 		esac ; \

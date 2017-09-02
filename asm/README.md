@@ -1,12 +1,9 @@
-============================================================================
-Source
-----------------------------------------------------------------------------
+# Source
 
 Transcribed from https://www.tutorialspoint.com/assembly_programming
 
-============================================================================
-Overview
-----------------------------------------------------------------------------
+# Overview
+
 An assembly program can be divided into three sections.
 1) section.data - used for declaring initialized data or constants. This data does not change at runtime. You can declare various constant values, file names, buffer sizes, etc. in this section.
 2) section.bss  - used for declaring variables
@@ -19,9 +16,7 @@ Assembly language programs consist of three types of statements.
 2) Assembler directives or pseudo-ops. Tell the assembler about various aspects of the assembly process. These are non-executable and do not generate machine language instructions
 3) Macros. Essentially a text substitution mechanism.
 
-============================================================================
-Syntax
-----------------------------------------------------------------------------
+# Syntax
 Statements are entered on statement per line following this format:
 
    [label]  mnemonic  [operands]  [;comment]
@@ -37,9 +32,7 @@ Examples of some typical assembly language statements:
     ADD MARKS, 10   ; Add 10 to the variable MARKS
     MOV AL, 10      ; Transfer the value 10 into the AL register
 
-============================================================================
-Hello World
-----------------------------------------------------------------------------
+# Hello World
 
 The following assembly language code displays the string 'Hello World' on
 the screen.
@@ -71,9 +64,7 @@ Output:
     Hello, world!
 
 
-============================================================================
-Memory Segments
-----------------------------------------------------------------------------
+# Memory Segments
 
 We have already covered the three sections of an assembly program. These sections represent various memory segments as well. Interestingly, you can replace the "section" keyword with "segment" and get the same result. I.e.:
 

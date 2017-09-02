@@ -5,9 +5,9 @@ Transcribed from https://www.tutorialspoint.com/assembly_programming
 # Overview
 
 An assembly program can be divided into three sections.
-1) section.data - used for declaring initialized data or constants. This data does not change at runtime. You can declare various constant values, file names, buffer sizes, etc. in this section.
-2) section.bss  - used for declaring variables
-3) section.text - used for keeping the actual code; must begin with the declaration "global _start", which tells the kernel where the program execution begins
+1) **section.data** - used for declaring initialized data or constants. This data does not change at runtime. You can declare various constant values, file names, buffer sizes, etc. in this section.
+2) **section.bss**  - used for declaring variables
+3) **section.text** - used for keeping the actual code; must begin with the declaration "global _start", which tells the kernel where the program execution begins
 
 Comments begin with a semicolon.
 
@@ -75,10 +75,78 @@ A segmented memory model divides the system memory into groups of independent se
 
 In light of the above section, we can specify various memory segments as:
 
-1) Data segment. Represented by .data section and the .bss. The .data section is used to declare the memory region where data elements are stored for the program. This section cannot be expanded after the data elements are declared, and it remains static throughout the program. The .bss section is also a sstatic memory section that contains buffers for data to be declared later in the program. This buffer memory is zero-filled.
+1) **Data segment**. Represented by .data section and the .bss. The .data section is used to declare the memory region where data elements are stored for the program. This section cannot be expanded after the data elements are declared, and it remains static throughout the program. The .bss section is also a sstatic memory section that contains buffers for data to be declared later in the program. This buffer memory is zero-filled.
 
-2) Code segment. Represented by the .text section. This defines an area in memory that stores the instruction codes. This is also a fixed area.
+2) **Code segment**. Represented by the .text section. This defines an area in memory that stores the instruction codes. This is also a fixed area.
 
-3) Stack. This segment contains data values passed to functions and procedures within the program.
+3) **Stack**. This segment contains data values passed to functions and procedures within the program.
 
+# Registers
 
+Processor operations mostly; involve processing data. This data can be stored in memory and accessed from thereon. However, reading data from and storing data into memory slows down the processor, ass it involves complicated processes of sending the data request across the control bus and into the memory storage unit and getting the data through the same channel.
+
+To speed up the processor operations, thet processor includes some internal memory storage locations called *registers*. 
+
+The registers store data elements for processing without having to access the memory. A limited number of registers are build into the processor chip.
+
+## Processor Registers
+
+There are ten 32-bit and six 16-bit processor registers in IA-32 architecture. The registers are grouped into three categories:
+
+1) General registers
+2) Control registers
+3) Segment registers
+
+The general registers are further divided into the following groups:
+
+1) Data registers
+2) Pointer registers
+3) Index registers
+
+## Data Registers
+
+Four 32-bit data registers are used for arithmetic, logical, and other operations. These 32-bit registers can be used in three ways:
+
+* As complete 32-bit data registers: EAX, EBX, ECX, EDX
+* Lower halves of the 32-bit registers can be used as four 16-bit data registers: AX, BX, CX, DX
+* Lower and higher halves of the above-mentioned four 16-bit registers can be used as eight 8-bit data registers: AH, AL, BH, BL, CH, CL, DH, and DL
+
+    31             16        8      0
+     --------------------------------
+    | EAX           |  AH    |  AL  |  AX  Accumulator
+    |--------------------------------
+    | EBX           |  BH    |  BL  |  BX  Base
+    |--------------------------------
+    | ECX           |  CH    |  CL  |  CX  Counter
+    |--------------------------------
+    | EDX           |  DH    |  DL  |  DX  Data
+    |--------------------------------
+
+Some of these data registers have specific use in arithmetical operations.
+
+**AX** is the **primary accumulator**. It is used in input/output and most arithmetic instructions. For example, in multiplication operation, one operand is stored in AX or AX or AL register according to the size of the operand
+
+**BX** is known as the **base register**, as it could be used in indexed addressing.
+
+**CX** is known as the **count register**, as the ECX, CX registers store the loop count in iterative operation.
+
+**DX** is known as the **data register**. It is also used in input/output operations. It is also used with the AX register along with DX for multiplication and division operations involving large values
+
+## Pointer Registers
+
+The pointer registers are 32-bit EIP, ESP, and EBP registers and corresponding 16-bit right portions IP, SP, and BP. There are three categories of pointer registers. There are three categories of pointer registers:
+
+* **Instruction Pointer (IP)** - The 16-bit IP register stores the offset address of the next instruction to be executed. IP in association with the CS register (as CS:IP) gives the complete address of the current instruction in the code segment.
+
+* **Stack Pointer (SP)** - The 16-bit SP register provides the offset value within the program stack. SP in association with the SS register (SS:SP) refers to the current position of data or address within the program stack.
+
+* **Base Pointer (BP)** - The 16-bit BP register mainly helps in referencing the parameter variables passed to a subroutine. The address in SS register is combined with the offset in BP to get the location of the parameter. BP can also be combined with DI and SI as a base register for special addressing.
+
+    31             16               0
+     --------------------------------
+    | ESP           | SP            |  Stack Pointer
+     --------------------------------
+    | EBP           | BP            |  Base Pointer
+     --------------------------------
+
+## Index Registers

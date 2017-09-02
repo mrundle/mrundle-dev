@@ -19,7 +19,7 @@ Assembly language programs consist of three types of statements.
 # Syntax
 Statements are entered on statement per line following this format:
 
-   [label]  mnemonic  [operands]  [;comment]
+    [label]  mnemonic  [operands]  [;comment]
 
 The fields in square brackets are optional. A basic instruction has two parts, the first one ins the name of the instruction (or the mnemonic) to be executed, and the second are the operands or parameters of the command.
 
@@ -142,11 +142,13 @@ The pointer registers are 32-bit EIP, ESP, and EBP registers and corresponding 1
 
 * **Base Pointer (BP)** - The 16-bit BP register mainly helps in referencing the parameter variables passed to a subroutine. The address in SS register is combined with the offset in BP to get the location of the parameter. BP can also be combined with DI and SI as a base register for special addressing.
 
+```
     31             16               0
      --------------------------------
     | ESP           | SP            |  Stack Pointer
      --------------------------------
     | EBP           | BP            |  Base Pointer
      --------------------------------
+```
 
 ## Index Registers

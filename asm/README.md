@@ -18,25 +18,29 @@ Assembly language programs consist of three types of statements.
 
 # Syntax
 Statements are entered on statement per line following this format:
-
+```
     [label]  mnemonic  [operands]  [;comment]
+```
 
 The fields in square brackets are optional. A basic instruction has two parts, the first one ins the name of the instruction (or the mnemonic) to be executed, and the second are the operands or parameters of the command.
 
 Examples of some typical assembly language statements:
 
+```
     INC COUNT       ; Increment the memory variable COUNT
     MOV TOTAL, 48   ; Transfer the value 48 in the memory TOTAL
     ADD AH, BH      ; Add the content of the BH register into the AH register
     AND MASK1, 128  ; Perform AND operation on the variable MASK1 and 128
     ADD MARKS, 10   ; Add 10 to the variable MARKS
     MOV AL, 10      ; Transfer the value 10 into the AL register
+```
 
 # Hello World
 
 The following assembly language code displays the string 'Hello World' on
 the screen.
 
+```
     section	.text
        global _start     ;must be declared for linker (ld)
         
@@ -53,23 +57,29 @@ the screen.
     section	.data
     msg db 'Hello, world!', 0xa  ;string to be printed
     len equ $ - msg     ;length of the string
+```
 
 To compile and run, write that to hw.asm and execute:
 
+```
 	nasm -f elf hello.asm
 	ld -m elf_i386 -s -o hello hello.o
+```
 
 Output:
 
+```
     Hello, world!
-
+```
 
 # Memory Segments
 
 We have already covered the three sections of an assembly program. These sections represent various memory segments as well. Interestingly, you can replace the "section" keyword with "segment" and get the same result. I.e.:
 
+```
     segment .text
         global _start        
+```
 
 A segmented memory model divides the system memory into groups of independent segments referenced by pointers located in the segment registers. Each segment is used to contain a specific type of data. One segment is used to contain instruction codes, another segment stores data elements, and a third segment keeps track of the program stack. 
 
@@ -111,6 +121,7 @@ Four 32-bit data registers are used for arithmetic, logical, and other operation
 * Lower halves of the 32-bit registers can be used as four 16-bit data registers: AX, BX, CX, DX
 * Lower and higher halves of the above-mentioned four 16-bit registers can be used as eight 8-bit data registers: AH, AL, BH, BL, CH, CL, DH, and DL
 
+```
     31             16        8      0
      --------------------------------
     | EAX           |  AH    |  AL  |  AX  Accumulator
@@ -121,6 +132,7 @@ Four 32-bit data registers are used for arithmetic, logical, and other operation
     |--------------------------------
     | EDX           |  DH    |  DL  |  DX  Data
     |--------------------------------
+```
 
 Some of these data registers have specific use in arithmetical operations.
 

@@ -1,6 +1,37 @@
+Table of Contents
+=================
+
+   * [Source](#source)
+   * [Table of Contents (TOC) Generator](#table-of-contents-toc-generator)
+   * [Overview](#overview)
+   * [Syntax](#syntax)
+   * [Hello World](#hello-world)
+   * [Memory Segments](#memory-segments)
+   * [Registers](#registers)
+      * [Processor Registers](#processor-registers)
+      * [Data Registers](#data-registers)
+      * [Pointer Registers](#pointer-registers)
+      * [Index Registers](#index-registers)
+      * [Control Registers](#control-registers)
+      * [Segment Registers](#segment-registers)
+      * [Example](#example)
+   * [Linux System Calls](#linux-system-calls)
+      * [Example](#example-1)
+
+Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc)
+
 # Source
 
 Transcribed from https://www.tutorialspoint.com/assembly_programming
+
+# Table of Contents (TOC) Generator
+
+```
+# From https://github.com/ekalinin/github-markdown-toc
+wget https://raw.githubusercontent.com/ekalinin/github-markdown-toc/master/gh-md-toc
+chmod a+x gh-md-toc
+./gh-md-toc README.md
+```
 
 # Overview
 

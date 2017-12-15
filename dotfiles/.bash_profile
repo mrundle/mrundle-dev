@@ -1,15 +1,39 @@
 # .bash_profile
-
-email_address=m.n.rundle@gmail.com
+email_addr=m.n.rundle@gmail.com
 
 # Get the aliases and functions
 if [ -f ~/.bashrc ]; then
-    . ~/.bashrc
+	. ~/.bashrc
 fi
 
+setup_path() {
+    PATH+=:$HOME/bin
+    export PATH
+}
+
 setup_git() {
-    git config --global user.email "$email_address"
-    git config --global user.name "Matt Rundle"
+    alias gg="git grep"
+    # hash of most recent commit
+    alias gitlast="git log | head -n 1 | awk '{print \$2}'"
+}
+
+setup_aliases() {
+    alias picoc="picoc -i"
+    alias c="picoc -i"
+}
+
+setup_mac() {
+    # Colors for mac terminal
+    export PS1="\[\033[36m\]\u\[\033[m\]@\[\033[32m\]\h:\[\033[33;1m\]\w\[\033[m\]\$ "
+    export CLICOLOR=1
+    export LSCOLORS=ExFxBxDxCxegedabagacad
+    alias ls='ls -GFh'
+}
+
+setup_demo() {
+    _DEMO=false
+    alias demo="export _DEMO=true; export OLD_PS1='$PS1'; export PS1='\e[36m$ \e[39m'"
+    alias undemo="if $_DEMO; then export PS1='$OLD_PS1'; _DEMO=false; fi"
 }
 
 setup_ssh() {
@@ -53,7 +77,7 @@ setup_notetaker() {
             tmpmail=/tmp/tmp.mail
             echo "Subject: [note] $@" > $tmpmail
             cat $filename >> $tmpmail
-            sendmail $email_address < $tmpmail
+            sendmail $email_addr < $tmpmail
         fi
     }
     export -f note
@@ -70,55 +94,43 @@ setup_tmux() {
     alias ta="tattach"
 }
 
-setup_prompt() {
-    bold="\e[1m"
-    red="\e[31m"
-    green="\e[32m"
-    yellow="\e[33m"
-    cyan="\e[36m"
-    reset='$(tput sgr0)'
-    dir="\w"
-    return_color='$([ $? -eq 0 ] && echo "'$green'" || echo "'$red'")'
-    username="\u"
-    export TZ=America/Los_Angeles
-    current_time="\A"
-    if [ -e ~/.host ]; then host_string=" $(cat ~/.host)" ; else host_string="" ; fi
-    PS1="${bold}${return_color}${username} ${current_time}${cyan}${host_string} ${yellow}${dir}${reset}\\n$ "
+colors() {
+    for i in {0..255}; do
+        printf "\x1b[38;5;${i}mcolour${i}\x1b[0m\n"
+    done
 }
+export -f colors
 
-setup_grep() {
-    strjoin() { local IFS="$1"; shift; echo "$*"; }
-    alias grepv="grep -viE '(binary|build)'" # filter out common annoyances
-    rgrep() {
-        if [ $# -eq 0 ]; then
-            echo "usage: ${FUNCNAME[0]} regex1 ... regexN"
-            return 1
-        fi
-        grep -nrE "(strjoin '|' $*)" . | grepv
-    }
-    export -f rgrep
+alert() {
+    # bold, underlined, yellow
+    local msg=ALERT
+    printf "\e[1m\e[4m\e[93m$msg\e[0m"
 }
+export -f alert
 
-setup_mawk() {
-    # todo: optionally specify separator (-s|--separator)
-    mawk() {
-        if [ $# -eq 0 ]; then
-            echo "usage: ${FUNCNAME[0]} n"
-            return 1
-        fi
-        args=$(for i in `seq $#`; do printf "\$${@:$i:1},"; done)
-        args=$(echo $args | sed 's/,$//')
-        awk "{print $args}"
-    }
-    export -f mawk
+ask() {
+    prompt="$@ (y/n): "
+    while true; do
+        read -p "$prompt" resp
+        case $resp in
+            [Yy]* ) return 0;;
+            [Nn]* ) return 1;;
+            * ) echo -e "\n$prompt";;
+        esac
+    done
 }
+export -f ask
 
-setup=(
-    git
-    grep
-    mawk
-    notetaker
-    prompt
-    tmux
-)
-for i in ${setup[*]}; do setup_$i; done
+rgrep() {
+    grep -nr "$@" .
+}
+export -f rgrep
+
+setup_path
+setup_aliases
+setup_mac
+setup_ssh
+setup_git
+setup_notetaker
+setup_tmux
+setup_demo

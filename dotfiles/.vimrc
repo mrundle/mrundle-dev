@@ -66,6 +66,14 @@ nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
 
+" Unicode digraphs courtesy of gooddan@
+" Japanese quotation marks
+"     <C-k>[[ = ⌈
+"     <C-k>]] = ⌋
+" Fullwidth asterisk
+"     <C-k>88 = ＊
+dig [[ 8968 ]] 8971 88 65290
+
 " Load all plugins now
 " Plugins need to be added to runtimepath before helptags can be generated
 "packloadall

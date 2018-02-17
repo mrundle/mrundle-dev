@@ -19,6 +19,7 @@ tests=(
     variables.go\ "variables"
     loop.go\ "01234567"
     arrays.go\ "abc123def"
+    if-else.go\ "ok"
 )
 
 for (( i = 0; i < ${#tests[@]}; i++ )); do

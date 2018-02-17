@@ -5,6 +5,14 @@ import "log"
 import "os"
 import "path"
 
+func constants() {
+    const str_a string = "abc"
+    str_b := "def"
+    if (str_a == str_b) {
+        log.Fatal("fatal")
+    }
+}
+
 func main() {
     var a = "string"
     // type is inferred

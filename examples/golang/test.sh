@@ -1,25 +1,24 @@
 #!/bin/bash -eu
 
-pass() { echo -e "\e[1m\e[92mPASS\e[39m\e[8m"; }
-fail() { echo -e "\e[1m\e[91mFAIL\e[39m\e[8m"; }
+grn() { echo -e "\e[1m\e[92m${*^^}\e[39m\e[0m"; }
+red() { echo -e "\e[1m\e[91m${*^^}\e[39m\e[0m"; }
 
 runtest() {
-    echo -n "$1 "
+    echo -n " * $1 -> "
     out=`go run $1`; shift
     if ! [[ $out == $* ]]; then
-        fail
+        red fail
         echo "expected '$*' but got '$out'"
         exit 1
     fi
-    pass
+    grn pass
 }
 
 tests=(
     hello_world.go\ "hello world"
+    variables.go\ "variables"
 )
 
 for (( i = 0; i < ${#tests[@]}; i++ )); do
     runtest ${tests[i]}
 done
-
-fail

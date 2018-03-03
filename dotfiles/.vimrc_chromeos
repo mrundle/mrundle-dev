@@ -1,6 +1,4 @@
-" .vimrc
-
-filetype plugin indent on
+" .vimrc for chromeos
 
 " Auto complete (hit Tab+Tab to see completions)
 " :help 'complete'
@@ -19,9 +17,6 @@ set expandtab    " On pressing tab, insert 4 spaces
 " show line numbers
 set number
 
-" highlight the 81st column
-:2mat ErrorMsg '\%81v.'
-
 " bigger clipboard
 set viminfo='20,<1000
 
@@ -31,9 +26,6 @@ set viminfo='20,<1000
 set spell spelllang=en_us
 hi clear SpellBad
 hi SpellBad cterm=bold,undercurl
-
-:highlight ExtraWhitespace ctermbg=red
-:match ExtraWhitespace /\s\+$/
 
 "set formatoptions=cnt1
 set textwidth=80

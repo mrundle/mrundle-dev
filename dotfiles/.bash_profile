@@ -20,6 +20,7 @@ setup_git() {
 setup_aliases() {
     alias picoc="picoc -i"
     alias c="picoc -i"
+    alias work="cd ~/work"
 }
 
 setup_mac() {

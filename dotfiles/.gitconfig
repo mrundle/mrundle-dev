@@ -1,0 +1,5 @@
+[user]
+	email = m.n.rundle@gmail.com
+	name = Matt Rundle
+[push]
+	default = simple

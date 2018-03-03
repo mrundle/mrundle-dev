@@ -109,12 +109,12 @@ colors() {
 }
 export -f colors
 
-alert() {
+_alert() {
     # bold, underlined, yellow
     local msg=ALERT
     printf "\e[1m\e[4m\e[93m$msg\e[0m"
 }
-export -f alert
+export -f _alert
 
 ask() {
     prompt="$@ (y/n): "

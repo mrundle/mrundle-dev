@@ -94,6 +94,14 @@ setup_tmux() {
     alias ta="tattach"
 }
 
+# use like:
+#    $ cat /tmp/bigfile.txt | paste
+#    http://termbin.com/j06n
+paste() {
+    nc termbin.com 9999 < /dev/stdin
+}
+export -f paste
+
 colors() {
     for i in {0..255}; do
         printf "\x1b[38;5;${i}mcolour${i}\x1b[0m\n"

@@ -2,9 +2,9 @@
 
 " Auto complete (hit Tab+Tab to see completions)
 " :help 'complete'
-:imap <Tab><Tab> <C-P>
-set complete=.,w,b,u,t,i,d,]
-set completeopt=longest,menuone
+":imap <Tab><Tab> <C-P>
+"set complete=.,w,b,u,t,i,d,]
+"set completeopt=longest,menuone
 
 " Remap the escape key
 :imap jk <Esc>

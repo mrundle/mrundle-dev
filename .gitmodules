@@ -1,0 +1,3 @@
+[submodule "third_party/ranger"]
+	path = third_party/ranger
+	url = https://github.com/ranger/ranger.git

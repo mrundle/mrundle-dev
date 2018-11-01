@@ -1,7 +1,7 @@
 all: bit_printer test
 
 bit_printer: %: %.c
-	gcc $< -o $@
+	gcc -std=gnu99 $< -o $@
 
 .PHONY: test
 test: test.sh

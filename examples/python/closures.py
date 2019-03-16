@@ -1,10 +1,11 @@
 #!/usr/bin/python2.7
+# https://www.geeksforgeeks.org/python-closures/
 
-def generator(x):
+def strgen():
+    localstr = 'localstr'
     def gen():
-        return x
+        return localstr
     return gen
 
-gen = generator(10)
-for i in range(10):
-    print gen()
+_s = strgen()
+print('printing: "%s"' % _s())

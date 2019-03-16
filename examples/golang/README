@@ -1,0 +1,3 @@
+./INSTALL-GO.sh
+go run hello_world.go
+./test.sh

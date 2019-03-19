@@ -18,7 +18,6 @@
     fprintf(stderr, "mrsh: ");  \
     fprintf(stderr, args);  \
     fprintf(stderr, "\n");  \
-    exit(EXIT_FAILURE);     \
 } while (0)
 
 #define fatal(args...) do { \
@@ -55,6 +54,8 @@ mrsh_help(char **args)
 static void
 mrsh_exit(char **args)
 {
+    /* cya */
+    printf("\n");
     exit(EXIT_SUCCESS);
 }
 
@@ -65,8 +66,11 @@ mrsh_cd(char **args)
         error("mrsh: expected arg to 'cd'\n");
         return;
     }
-    if (chdir(args[1]) != 0) {
-        error("mrsh: chdir(): %s", strerror(errno));
+    char *dir = args[1];
+    unsigned len = strlen(dir);
+    if (dir[len - 1] == '\n') { dir[len - 1] = '\0'; }
+    if (chdir(dir) != 0) {
+        error("mrsh: chdir(%s): %s", dir, strerror(errno));
     }
 }
 
@@ -151,7 +155,10 @@ mrsh_read_line(void)
     char *buf = mrsh_malloc(buflen);
 
     for (int c, pos = 0; ; pos++) {
-        if ((c = getchar()) == EOF || c == '\n') {
+        c = getchar();
+        if (c == EOF) {
+            mrsh_exit(NULL);
+        } else if (c == '\n') {
             buf[pos] = '\0';
             return buf;
         } else {
@@ -188,20 +195,59 @@ mrsh_exec(char **args)
     }
 }
 
+
+/* signal handler; useless for now */
+void sighandler(int sig)
+{
+    switch(sig) {
+        case SIGINT:
+            mrsh_exit(NULL);
+            break;
+        default:
+            printf("caught sig %d, re-raising\n", sig);
+            if (signal(sig, SIG_DFL) == SIG_ERR) {
+                exit(EXIT_FAILURE);
+            }
+            raise(sig);
+    }
+}
+
+void setup_sighandlers()
+{
+    unsigned sigs[] = {
+        SIGINT,
+        SIGINT,
+        SIGSEGV,
+    };
+    for (unsigned i = 0; i < elementsof(sigs); i++) {
+        if (signal(sigs[i], &sighandler) == SIG_ERR) {
+            fatal("failed to set signal handler for sig%u", sigs[i]);
+        }
+    }
+}
+
 int
 main(int argc, char **argv)
 {
+    setup_sighandlers();
+
     while (1) {
         printf(PROMPT_CHAR " ");
         char *line = mrsh_read_line();
         char **args = mrsh_tok_line(line);
+        if (line == NULL || *line == '\0') continue;
+        bool ran_builtin = false;
         for (unsigned i = 0; i < elementsof(_builtins); i++) {
             if (strcmp(*args, _builtins[i].name) == 0) {
+                ran_builtin = true;
                 _builtins[i].function(args);
-                continue;
+                break;
             }
         }
-        mrsh_exec(args);
+        if (!ran_builtin) {
+            /* not a builtin, exec */
+            mrsh_exec(args);
+        }
     }
 
     return 0;

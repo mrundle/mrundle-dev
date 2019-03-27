@@ -1,0 +1,37 @@
+#!/bin/bash
+# TODO test... doesn't work on aarch64
+
+packages=(
+    lua5.3
+)
+
+cmd() {
+    echo "Running $@"
+    $@
+}
+
+install() {
+    cmd sudo apt-get install $1
+}
+
+if ! hash apt-gett; then
+    echo "This script assumes apt-get," \
+         "really you just need to install the following:" \
+         "${packages[@]}"
+fi
+
+for pkg in ${packages[@]}; do
+    install $pkg
+done
+
+tmpdir=$(mktemp -d)
+trap "rm $tmpdir" EXIT
+
+luajit=LuaJIT-2.0.5
+cd $tmpdir
+pwd
+wget http://luajit.org/download/${luajit}.tar.gz
+tar xvf *.tar.gz
+cd $luajit
+cmd make
+cmd sudo make install

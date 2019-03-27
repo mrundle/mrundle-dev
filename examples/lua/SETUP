@@ -2,7 +2,8 @@
 # TODO test... doesn't work on aarch64
 
 packages=(
-    lua5.3
+    lua5.1
+    liblua5.1-0-dev
 )
 
 cmd() {

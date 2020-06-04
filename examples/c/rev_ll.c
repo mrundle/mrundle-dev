@@ -39,4 +39,6 @@ int main(void) {
 
     print_list(&a);
     print_list(reverse_list(&a));
+
+    return 0;
 }

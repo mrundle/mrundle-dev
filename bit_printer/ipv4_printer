@@ -1,0 +1,16 @@
+#!/bin/bash -eu
+bp=./bit_printer
+if ! [[ -x $bp ]]; then
+    echo missing $bp
+    exit 1
+fi
+ip=(${1//./ })
+if [[ ${#ip} -ne 3 ]]; then
+    echo "usage: ${0##*/} ipv4addr"
+    echo "    e.g. ${0##*/} 255.255.255.255"
+    exit 1
+fi
+printf "%s."  $($bp ${ip[0]})
+printf "%s."  $($bp ${ip[1]})
+printf "%s."  $($bp ${ip[2]})
+printf "%s\n" $($bp ${ip[3]})

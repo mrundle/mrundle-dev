@@ -10,7 +10,12 @@ fi
 test_prog=`realpath $1`
 
 cmp() {
-    local -r res=`$test_prog $1`
+    local res=`$test_prog $1`
+    if [[ $res =~ ^0+$ ]]; then
+       res=0
+    else
+        res=$(sed -e 's/^0*//' <<< "$res") # strip leading 0
+    fi
     local -r exp=`bc <<< "obase=2; $1"`
     if [[ $res != $exp ]]; then
         echo "failed on $1"

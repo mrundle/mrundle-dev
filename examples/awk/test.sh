@@ -1,0 +1,1 @@
+./example.awk example.txt

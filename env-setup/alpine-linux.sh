@@ -1,0 +1,35 @@
+#!/bin/bash
+pkgs=(
+    man-pages
+    mdocml-apropos
+    less
+    less-doc
+    curl
+    shadow
+    build-base
+    gcc
+    abuild
+    binutils
+    binutils-doc
+    gcc-doc
+    cmake
+    cmake-doc
+    extra-cmake-modules
+    extra-cmake-modules-doc
+    ccache
+    ccache-doc
+    bash
+    bash-doc
+    bash-completion
+    musl-dev
+    gcc
+    build-base
+    util-linux
+    pciutils
+    usbutils
+    coreutils
+    binutils
+    findutils
+    grep
+)
+apk add ${pkgs[@]}

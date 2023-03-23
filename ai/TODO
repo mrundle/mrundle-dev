@@ -1,0 +1,3 @@
+- install python dependencies
+-    aiohttp
+-    urllib

@@ -1,0 +1,4 @@
+#!/bin/bash
+git clone https://github.com/openai/openai-python.git
+cd openai-python
+python setup.py install

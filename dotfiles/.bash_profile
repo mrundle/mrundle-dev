@@ -15,10 +15,13 @@ setup_path() {
     export PATH
 }
 
-setup_git() {
+setup_git()
+{
     alias gg="git grep"
     # hash of most recent commit
     alias gitlast="git log | head -n 1 | awk '{print \$2}'"
+    git-add-modified() { git status | grep modified | awk '{print $2}' | xargs git add; }
+    export -f git-add-modified
 }
 
 setup_aliases() {
@@ -106,15 +109,43 @@ setup_notetaker() {
     export -f note
 }
 
-setup_tmux() {
-    alias tls="tmux ls"
+setup_tmux()
+{
+    TMUX=/usr/bin/tmux
+
+    alias tls="$TMUX ls"
     alias tl="tls"
-    alias tnew="tmux new -s"
+    alias tnew="$TMUX new -s"
     alias tn="tnew"
-    alias tkill="tmux kill-session -t"
+    alias tkill="$TMUX kill-session -t"
     alias tk="tkill"
-    alias tattach="tmux attach -dt"
+    alias tattach="$TMUX attach -dt"
     alias ta="tattach"
+
+    tmux_date() { /bin/date '+%A-%d-%b-%Y' "$@"; } # like "Thursday-14-Oct-2021"
+    tmux_date_yesterday() { tmux_date -d '1 day ago'; }
+    tmux_sessions() { $TMUX list-sessions -F '#{session_name}'; }
+    tmux_session_exists() {
+        local -r session=$1
+        for s in $(tmux_sessions); do
+            [[ $s == $session ]] && return 0
+        done
+        return 1
+    }
+    ttoday() {
+        session=$(tmux_date)
+        $TMUX new-session -DAs $session
+        # TODO
+        # if today exists, use that
+        # if yesterday exists, offer to copy
+        # otherwise, prompt to kill all older sessions and create
+    }
+    tyesterday() {
+        session=$(tmux_date_yesterday)
+        $TMUX attach-session -dt $session
+    }
+    export -f ttoday
+    export -f tyesterday
 }
 
 colors() {

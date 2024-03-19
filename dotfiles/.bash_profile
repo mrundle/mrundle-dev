@@ -111,7 +111,11 @@ setup_notetaker() {
 
 setup_tmux()
 {
-    TMUX=/usr/bin/tmux
+    TMUX=$(which tmuxf)
+    if [[ -z $TMUX ]]; then
+        echo "couldn't find tmux in \$PATH, skipping setup" >&2
+        return
+    fi
 
     alias tls="$TMUX ls"
     alias tl="tls"

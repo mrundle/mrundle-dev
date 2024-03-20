@@ -10,6 +10,7 @@ setup_path() {
     local -a paths
     paths+=(
         $HOME/bin
+        /opt/homebrew/bin
     )
     for p in ${paths[@]}; do PATH+=:$p; done
     export PATH
@@ -111,7 +112,7 @@ setup_notetaker() {
 
 setup_tmux()
 {
-    TMUX=$(which tmuxf)
+    TMUX=$(which tmux)
     if [[ -z $TMUX ]]; then
         echo "couldn't find tmux in \$PATH, skipping setup" >&2
         return

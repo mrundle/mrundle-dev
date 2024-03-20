@@ -43,6 +43,7 @@ setup_aliases() {
     alias scope="cscope -b -q -k"
     alias post-review="PYTHONHTTPSVERIFY=0 post-review"
     alias ec2-ssh=/apollo/env/EC2SSHWrapper/bin/ec2-ssh
+    alias work="cd $HOME/work"
 }
 
 setup_mac() {

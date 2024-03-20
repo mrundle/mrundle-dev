@@ -2,11 +2,12 @@
 
 filetype plugin indent on
 
-" Auto complete (hit Tab+Tab to see completions)
-" :help 'complete'
-:imap <Tab><Tab> <C-P>
-set complete=.,w,b,u,t,i,d,]
-set completeopt=longest,menuone
+"" Auto complete (hit Tab+Tab to see completions)
+"" :help 'complete'
+"" XXX disabling for now, too slow
+":imap <Tab><Tab> <C-P>
+"set complete=.,w,b,u,t,i,d,]
+"set completeopt=longest,menuone
 
 " Remap the escape key
 :imap jk <Esc>
@@ -44,3 +45,9 @@ nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
+
+" Return to last edit position when opening files
+autocmd BufReadPost *
+     \ if line("'\"") > 0 && line("'\"") <= line("$") |
+     \   exe "normal! g`\"" |
+     \ endif

@@ -15,7 +15,7 @@ cached for multiple repeated calls.
 """
 
 import warnings
-#warnings.filterwarnings('ignore')
+warnings.filterwarnings('ignore')
 
 import argparse
 import codecs

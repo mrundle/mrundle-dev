@@ -89,6 +89,12 @@ class MatchSummary(object):
         dt = self.date.astimezone(tz=tz)
         return dt.strftime(f'%A %B %d %Y, %I:%M %p {dt.tzname()}')
 
+    def starts_in_n_minutes(self, n=5):
+        now = datetime.datetime.now(datetime.timezone.utc)
+        delta = self.date - now
+        seconds_til_start = delta.total_seconds()
+        return seconds_til_start <= (n * 60)
+
     def is_ended(self):
         return self.data["is_final"]
 
@@ -229,6 +235,8 @@ def main():
 
     for m in matches:
         print(m)
+        if m.starts_in_n_minutes(10):
+            pass # TODO post to reddit
         """
         TODO:
          1. Integrate with reddit api to create match thread

@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
+#include <netinet/in.h>
 
 #define PAD_TO 8
 
@@ -13,15 +15,19 @@
     exit(EXIT_FAILURE);                             \
 } while (0)
 
-// cast everything directly to a size_t
-#define print_bits(x, buf, buflen) _print_bits((size_t)x, buf, buflen)
+// cast everything directly to a uint64_t
+#define print_bits(x, buf, buflen) _print_bits((uint64_t)x, buf, buflen)
 
 static int
-_print_bits(size_t x, char *const buf, const unsigned len)
+_print_bits(uint64_t x, char *const buf, const unsigned len)
 {
+    if (buf == NULL || len < 1) {
+        exit_error("bad args");
+    }
+    memset(buf, 0, len);
     bool zero = true;
     unsigned buf_i = 0;
-    for (size_t _i = sizeof(x) * CHAR_BIT; _i > 0; _i--) {
+    for (uint64_t _i = sizeof(x) * CHAR_BIT; _i > 0; _i--) {
         if (buf_i >= (len - 1)) {
             fprintf(stderr, "out of space");
             exit(EXIT_FAILURE);
@@ -51,8 +57,8 @@ int main(int argc, char **argv)
         exit_error("usage: %s <unsigned>", argv[0]);
     }
 
-    ssize_t n;
-    if (sscanf(argv[1], "%zd", &n) !=  1) {
+    uint64_t n;
+    if (sscanf(argv[1], "%lu", &n) !=  1) {
         exit_error("failed to parse input '%s' "
                    "(need number)", argv[1]);
     }

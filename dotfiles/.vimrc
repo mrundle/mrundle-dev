@@ -40,6 +40,9 @@ hi SpellBad cterm=bold,undercurl
 set textwidth=80
 set wrapmargin=0
 
+" highlight search result
+set hlsearch
+
 " more natural window movement (ctr+j instead of ctrl+W+j)
 nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>

@@ -228,6 +228,12 @@ termbin() {
 }
 export -f termbin
 
+setup_rust() {
+    if [[ -f ~/.cargo/env ]]; then
+        source ~/.cargo/env
+    fi
+}
+
 check_bash_version() {
     local major minor
     read major minor <<< $(echo ${BASH_VERSION} | awk -F. '{print $1,$2}')
@@ -245,4 +251,5 @@ setup_notetaker
 setup_tmux
 setup_demo
 setup_macos
+setup_rust
 check_bash_version

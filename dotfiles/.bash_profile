@@ -1,7 +1,6 @@
-
-# Get the aliases and functions
+# source aliases and functions
 if [ -f ~/.bashrc ]; then
-	. ~/.bashrc
+    . ~/.bashrc
 fi
 
 email_addr=m.n.rundle@gmail.com
@@ -23,6 +22,23 @@ setup_git()
     alias gitlast="git log | head -n 1 | awk '{print \$2}'"
     git-add-modified() { git status | grep modified | awk '{print $2}' | xargs git add; }
     export -f git-add-modified
+
+    # setup 1password for github cli
+    local -r plugin=/Users/mrundle/.config/op/plugins.sh
+    [[ -f $plugin ]] && source $plugin
+}
+
+using_macos() {
+    local -r os=$(uname)
+    [[ ${os,,} =~ darwin ]]
+}
+
+setup_macos() {
+    if ! using_macos; then
+        return 0
+    fi
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+    export BASH_SILENCE_DEPRECATION_WARNING=1
 }
 
 setup_aliases() {
@@ -212,6 +228,14 @@ termbin() {
 }
 export -f termbin
 
+check_bash_version() {
+    local major minor
+    read major minor <<< $(echo ${BASH_VERSION} | awk -F. '{print $1,$2}')
+    if [[ $major -lt 4 ]]; then
+        echo "WARNING: older bash version detected (${BASH_VERSION})"
+    fi
+}
+
 setup_path
 setup_aliases
 setup_mac
@@ -220,3 +244,5 @@ setup_git
 setup_notetaker
 setup_tmux
 setup_demo
+setup_macos
+check_bash_version

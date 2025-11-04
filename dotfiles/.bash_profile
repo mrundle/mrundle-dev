@@ -177,14 +177,14 @@ colors() {
 }
 export -f colors
 
-alert() {
+alert_with_message() {
     # bold, underlined, yellow
     local alert_msg="ALERT"
     local extra_msg=""
     [[ -n $* ]] && extra_msg+="\e[93m ($*)\e[0m"
     printf "\e[1m\e[4m\e[93m${alert_msg}\e[0m${extra_msg}"
 }
-export -f alert
+export -f alert_with_message
 
 confirm() {
     # bold, underlined, green

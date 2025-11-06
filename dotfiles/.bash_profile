@@ -62,15 +62,24 @@ setup_aliases() {
     alias work="cd $HOME/work"
 }
 
-setup_mac() {
-    # Colors for mac terminal
+setup_terminal() {
+    # setup prompt
     PS1=
     # If on an ec2-instance, blink a reminder (bold black on yellow background)
-    [[ $USER == ec2-user ]] && PS1="\e[30m\e[103m\e[1m[EC2 INSTANCE]\e[0m "
+    [[ $USER == ec2-user ]] && PS1+="\e[30m\e[103m\e[1m[EC2 INSTANCE]\e[0m "
+    # If using gitbash or WSL (both would be Windows), set visual tag
+    local -r gitbash_tag="git-bash"
+    local -r wsl_tag="wsl"
+    [[ ${EXEPATH:-} =~ 'Git\bin' ]] && PS1+="\[\033[32m\]($gitbash_tag) \[\033[m"
+    [[ -n ${WSLENV:-} ]] && PS1+="\[\033[32m\]($wsl_tag) \[\033[m"
     PS1+="\[\033[36m\]\u\[\033[m\]@\[\033[32m\]\h:\[\033[33;1m\]\w\[\033[m\]\$ "
     export PS1
+
+    # colors for macos
     export CLICOLOR=1
     export LSCOLORS=ExFxBxDxCxegedabagacad
+
+    # change default list behavior"
     alias ls='ls -GFh'
 }
 
@@ -244,7 +253,7 @@ check_bash_version() {
 
 setup_path
 setup_aliases
-setup_mac
+setup_terminal
 setup_ssh
 setup_git
 setup_notetaker

@@ -3,3 +3,5 @@
 	name = Matt Rundle
 [push]
 	default = simple
+[core]
+	editor = vim

@@ -1,0 +1,24 @@
+{
+    "terminal.integrated.defaultProfile.windows": "Git Bash",
+    "security.workspace.trust.untrustedFiles": "open",
+    "vim.normalModeKeyBindingsNonRecursive": [
+
+    ],
+    "vim.normalModeKeyBindings": [
+        {
+            "before": [":", ":"],
+            "commands": [
+                "workbench.action.showCommands"
+            ],
+            "silent": true
+        }
+    ],
+    "vim.insertModeKeyBindings": [
+
+        {
+            "before": ["j", "k"],
+            "after": ["<Esc>"]
+        }
+    ],
+    "vim.ignorecase": false
+}

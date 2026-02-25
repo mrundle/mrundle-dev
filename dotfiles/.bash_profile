@@ -7,10 +7,8 @@ email_addr=m.n.rundle@gmail.com
 
 setup_path() {
     local -a paths
-    paths+=(
-        $HOME/bin
-        /opt/homebrew/bin
-    )
+    paths+=($HOME/bin)
+    using_macos && paths+=(/opt/homebrew/bin)
     for p in ${paths[@]}; do PATH+=:$p; done
     export PATH
 }
@@ -24,7 +22,7 @@ setup_git()
     export -f git-add-modified
 
     # setup 1password for github cli
-    local -r plugin=/Users/mrundle/.config/op/plugins.sh
+    local -r plugin=$HOME/.config/op/plugins.sh
     [[ -f $plugin ]] && source $plugin
 }
 
@@ -44,10 +42,7 @@ setup_macos() {
 setup_aliases() {
     alias picoc="picoc -i"
     alias c="picoc -i"
-    alias eh="expand-hostclass"
     alias findfiles="find . -type f | grep -v git"
-    alias gfind=findfiles
-    alias gf=gfind
     alias ff=findfiles
     # git
     alias ga="git add"
@@ -57,8 +52,6 @@ setup_aliases() {
     alias gP="git push"
     alias tags="ctags -R --languages=c,c++ --exclude='*build*' ."
     alias scope="cscope -b -q -k"
-    alias post-review="PYTHONHTTPSVERIFY=0 post-review"
-    alias ec2-ssh=/apollo/env/EC2SSHWrapper/bin/ec2-ssh
     alias work="cd $HOME/work"
 }
 
@@ -79,8 +72,12 @@ setup_terminal() {
     export CLICOLOR=1
     export LSCOLORS=ExFxBxDxCxegedabagacad
 
-    # change default list behavior"
-    alias ls='ls -GFh'
+    # change default list behavior
+    if using_macos; then
+        alias ls='ls -GFh'
+    else
+        alias ls='ls -Fh --color=auto'
+    fi
 }
 
 setup_demo() {
@@ -104,11 +101,11 @@ setup_notetaker() {
     # After saving the note, it will send you an email
     note() {
         if [ $# -eq 0 ]; then
-            echo "usage: ${FUNCNAME[0]} <title>" && exit 1
+            echo "usage: ${FUNCNAME[0]} <title>" && return 1
         elif [ -z $NOTE_DIR ]; then
-            echo "NOTE_DIR not defined" && exit 1
+            echo "NOTE_DIR not defined" && return 1
         elif [ ! -d $NOTE_DIR ]; then
-            mkdir $NOTE_DIR || exit 1
+            mkdir $NOTE_DIR || return 1
         fi
 
         title_message=""
@@ -138,24 +135,24 @@ setup_notetaker() {
 
 setup_tmux()
 {
-    TMUX=$(which tmux)
-    if [[ -z $TMUX ]]; then
+    local -r _TMUX_BIN=$(which tmux)
+    if [[ -z $_TMUX_BIN ]]; then
         echo "couldn't find tmux in \$PATH, skipping setup" >&2
         return
     fi
 
-    alias tls="$TMUX ls"
+    alias tls="$_TMUX_BIN ls"
     alias tl="tls"
-    alias tnew="$TMUX new -s"
+    alias tnew="$_TMUX_BIN new -s"
     alias tn="tnew"
-    alias tkill="$TMUX kill-session -t"
+    alias tkill="$_TMUX_BIN kill-session -t"
     alias tk="tkill"
-    alias tattach="$TMUX attach -dt"
+    alias tattach="$_TMUX_BIN attach -dt"
     alias ta="tattach"
 
     tmux_date() { /bin/date '+%A-%d-%b-%Y' "$@"; } # like "Thursday-14-Oct-2021"
     tmux_date_yesterday() { tmux_date -d '1 day ago'; }
-    tmux_sessions() { $TMUX list-sessions -F '#{session_name}'; }
+    tmux_sessions() { $_TMUX_BIN list-sessions -F '#{session_name}'; }
     tmux_session_exists() {
         local -r session=$1
         for s in $(tmux_sessions); do
@@ -165,7 +162,7 @@ setup_tmux()
     }
     ttoday() {
         session=$(tmux_date)
-        $TMUX new-session -DAs $session
+        $_TMUX_BIN new-session -DAs $session
         # TODO
         # if today exists, use that
         # if yesterday exists, offer to copy
@@ -173,7 +170,7 @@ setup_tmux()
     }
     tyesterday() {
         session=$(tmux_date_yesterday)
-        $TMUX attach-session -dt $session
+        $_TMUX_BIN attach-session -dt $session
     }
     export -f ttoday
     export -f tyesterday

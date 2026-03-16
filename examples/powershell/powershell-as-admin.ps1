@@ -2,4 +2,4 @@
 $domain = "$($env:USERDOMAIN)"
 $username = "$($env:USERNAME)-admin"
 $powershell = "pwsh.exe"
-runas "/user:$($domain)\$($username)" $powershell
+runas "/user:$($domain)\$($username)" "$powershell -noexit -command \"cd $env:USERPROFILE\""

@@ -12,10 +12,6 @@ All of these can be installed like via:
 - MacOS: `brew install {package-name}`
 - Linux: `sudo {apt|yum} install {package-name}`
 
-```
-
-```
-
 # Programs
 
 ## cmatrix
@@ -50,7 +46,9 @@ Lord, what fools these mortals be!
 ```
 
 If you want the "offensive" flag to work (`-o`/`-a`), you'll need to download
-and install some extra files.
+and install some extra files. For example, I downloaded files from [here](https://github.com/theodric/fortitude/tree/master/off/openSUSE-tw),
+ran `strfile <file>` for each one that wasn't a `.dat` or `.u8`, and then copied everything
+into the directory indicated by `fortune -o`. Which on macOS happened to be `/opt/homebrew/Cellar/fortune/9708/share/games/fortunes/off/`.
 
 ## sl
 

@@ -18,7 +18,10 @@ setup_git()
     alias gg="git grep"
     # hash of most recent commit
     alias gitlast="git log | head -n 1 | awk '{print \$2}'"
-    git-add-modified() { git status | grep modified | awk '{print $2}' | xargs git add; }
+    git-add-modified() {
+        git status | grep modified | sed -e 's/^\s*modified:\s*//' \
+            | while IFS= read -r f; do git add "$f"; done
+    }
     export -f git-add-modified
 
     # setup 1password for github cli
